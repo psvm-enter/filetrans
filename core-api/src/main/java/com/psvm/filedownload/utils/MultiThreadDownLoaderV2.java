@@ -40,7 +40,7 @@ public class MultiThreadDownLoaderV2 {
 		InputStream ins = conn.getInputStream();
 		
 		byte[] buffer = new byte[1024];
-		int len = 0;
+		int len ;
 		while((len = ins.read(buffer))!=-1) {
 			fos.write(buffer, 0, len);
 		}
@@ -75,7 +75,8 @@ public class MultiThreadDownLoaderV2 {
 		int responseCode = conn.getResponseCode();
 		
 		long currentTimeMillis = System.currentTimeMillis();
-		if(responseCode == 206) {			//支持范围请求
+		//支持范围请求
+		if(responseCode == 206) {
 			
 			//支持范围请求
 			String headerField = conn.getHeaderField("Content-Range");
@@ -147,10 +148,10 @@ public class MultiThreadDownLoaderV2 {
 				}
 				System.out.println("下载完成");
 				conn.disconnect();
-				countDownLatch.countDown();
 				targetFile.close();
 			} catch (Exception e) {
 				e.printStackTrace();
+			}finally {
 				countDownLatch.countDown();
 			}
 		}

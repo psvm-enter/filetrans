@@ -57,7 +57,8 @@ public class MultiThreadDownLoader {
 		long currentTimeMillis = System.currentTimeMillis();
 		conn.disconnect();
 		String fileExtName = url.substring(url.lastIndexOf("/"));
-		int currentPartSize = contentLength / threadNum; // 下载块大小
+		// 下载块大小
+		int currentPartSize = contentLength / threadNum;
 		File targetFile = new File(destFileFullPath + fileExtName);
 		AtomicInteger atomicInteger = new AtomicInteger();
 		
@@ -85,9 +86,6 @@ public class MultiThreadDownLoader {
 		private CountDownLatch countDownLatch;
 		private int totalLength;
 		private AtomicInteger atomicInteger;
-		
-		public DownLoaderThread() {
-		}
 
 		public DownLoaderThread(String targetUrl, int startWirteIndex, int writeLength, RandomAccessFile targetFile,
 				CountDownLatch countDownLatch,int totalLength, AtomicInteger atomicInteger) {
@@ -107,6 +105,7 @@ public class MultiThreadDownLoader {
 					+ ", writeLength=" + writeLength + ", targetFile=" + targetFile + "]";
 		}
 
+		@Override
 		public void run() {
 			// 获取连接实例，并且设置连接的头部
 			System.out.println(this.toString());
@@ -141,9 +140,9 @@ public class MultiThreadDownLoader {
 				targetFile.close();
 				atomicInteger.addAndGet(writeLength);
 				System.out.println("下载完成百分比："+atomicInteger.get()*1.0/totalLength);
-				countDownLatch.countDown();
 			} catch (Exception e) {
 				e.printStackTrace();
+			}finally {
 				countDownLatch.countDown();
 			}
 
